@@ -11,4 +11,6 @@ namespace core\response;
 interface IResponse
 {
 
+    public function send($data) : void;
+
 }

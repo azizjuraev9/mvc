@@ -13,14 +13,17 @@ use core\response\IResponse;
 
 class Application
 {
-    /**
-     * @var string
-     */
-    private string $errorPage;
+
     /**
      * @var bool
      */
     public bool $devMode = true;
+
+    public string $viewPath = 'views/';
+    /**
+     * @var string
+     */
+    private string $errorPage;
 
     /**
      * @var string
@@ -39,14 +42,24 @@ class Application
 
 
     /**
+     * @var string
+     */
+    private string $request;
+
+    /**
      * @var IRequest
      */
-    private IRequest $request;
+    private ?IRequest $_request = null;
+
+    /**
+     * @var string
+     */
+    private string $response;
 
     /**
      * @var IResponse
      */
-    private IResponse $response;
+    private ?IResponse $_response = null;
 
     /**
      * @var Route
@@ -61,9 +74,9 @@ class Application
     {
         foreach ( $config as $param => $value )
         {
-            if( isset( $this->$param ) )
+            if( property_exists($this, $param ) )
             {
-                $this->param = $value;
+                $this->$param = $value;
             }
         }
     }
@@ -76,8 +89,14 @@ class Application
             $request = $this->getRequest();
             $this->route = new Route($this,$request->getRoute());
 
-            call_user_func([ $this->route->getController(), $this->route->getAction() ]);
+            $controller = $this->route->getController();
+            $controller = new $controller( $this, $this->getRequest(), $this->getResponse() );
 
+            $action = $this->route->getAction();
+
+            $result = $controller->$action();
+
+            $this->getResponse()->send($result);
         }
         catch (\Throwable $e)
         {
@@ -88,7 +107,15 @@ class Application
             else
             {
                 $this->route = new Route($this,$this->errorPage);
-                call_user_func([ $this->route->getController(), $this->route->getAction() ]);
+
+                $controller = $this->route->getController();
+                $controller = new $controller( $this, $this->getRequest(), $this->getResponse() );
+
+                $action = $this->route->getAction();
+
+                $result = $controller->$action();
+
+                $this->getResponse()->send($result);
                 // --------------- LOG
             }
         }
@@ -99,7 +126,16 @@ class Application
      */
     public function getRequest() : IRequest
     {
-        return $this->request;
+        if ( !is_null( $this->_request ) )
+        {
+            return $this->_request;
+        }
+        elseif ( !empty( $this->request ) )
+        {
+            $this->_request = new $this->request;
+            return $this->getRequest();
+        }
+        throw new \ErrorException('Request must be instance of ' . IRequest::class,500);
     }
 
     /**
@@ -107,7 +143,16 @@ class Application
      */
     public function getResponse() : IResponse
     {
-        return $this->response;
+        if ( !is_null( $this->_response ) )
+        {
+            return $this->_response;
+        }
+        elseif ( !empty( $this->response ) )
+        {
+            $this->_response = new $this->response;
+            return $this->getResponse();
+        }
+        throw new \ErrorException('Request must be instance of ' . IRequest::class,500);
     }
 
     /**

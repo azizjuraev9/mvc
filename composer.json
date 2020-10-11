@@ -1,5 +1,15 @@
 {
+  "name": "juraev/mvc",
+  "version": "1.0.0",
+  "description": "Simple MVC application",
   "autoload": {
-    "psr-4": {"core\\": "core/"}
+    "psr-4": {
+      "core\\": "core/",
+      "controllers\\": "controllers/",
+      "models\\": "models/"
+    }
+  },
+  "require": {
+    "php": ">=7.4"
   }
 }

@@ -52,7 +52,7 @@ class Route
         $this->route = $route;
         $this->application = $application;
 
-        $_route = explode($route);
+        $_route = explode('/',$route);
         $this->_controller = $_route[0] ?? '';
         $this->_action = $_route[1] ?? '';
 
@@ -66,7 +66,10 @@ class Route
         }
 
 
-        $controller = $this->application->getControllerNamespace() . ucfirst($this->_controller);
+        $controller = $this->application->getControllerNamespace()
+            . ucfirst($this->_controller)
+            . 'Controller'
+        ;
         if( class_exists( $controller ) )
         {
             $this->controller = $controller;
@@ -74,18 +77,22 @@ class Route
         }
         elseif ($this->application->devMode)
         {
-            throw new \HttpException("Controller {$controller} not found",404);
+//            exit(404);
+            throw new NotfoundException("Controller {$controller} not found",404);
         }
 
 
-        $controller = $this->application->getControllerNamespace() . ucfirst($this->application->getDefaultController());
+        $controller = $this->application->getControllerNamespace()
+            . ucfirst($this->application->getDefaultController())
+            . 'Controller'
+        ;
         if( class_exists( $controller ) )
         {
             $this->controller = $controller;
             return $controller;
         }
 
-        throw new \HttpException('Route not found',404);
+        throw new NotfoundException('Route not found',404);
     }
 
     public function getAction() : string
@@ -104,7 +111,7 @@ class Route
         }
         elseif ($this->application->devMode)
         {
-            throw new \HttpException("Action {$action} does not exists in {$controller}",404);
+            throw new NotfoundException("Action {$action} does not exists in {$controller}",404);
         }
 
 
@@ -116,7 +123,7 @@ class Route
         }
 
 
-        throw new \HttpException('Route not found',404);
+        throw new NotfoundException('Route not found',404);
     }
 
     private function getRoute() : string

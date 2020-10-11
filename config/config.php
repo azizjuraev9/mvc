@@ -7,8 +7,11 @@
  */
 
 return [
+    'devMode' => false,
     'defaultController' => 'Site',
     'defaultAction' => 'index',
-    'controllerNamespace'  => 'app/controller',
+    'controllerNamespace'  => 'controllers\\',
     'errorPage' => 'site/error',
+    'request' => \core\request\HTTPRequest::class,
+    'response' => \core\response\WebHtmlResponse::class,
 ];
