@@ -7,7 +7,8 @@
  */
 
 return [
-    'defaultRoute' => 'site/index',
+    'defaultController' => 'Site',
     'defaultAction' => 'index',
     'controllerNamespace'  => 'app/controller',
+    'errorPage' => 'site/error',
 ];

@@ -13,11 +13,19 @@ use core\response\IResponse;
 
 class Application
 {
+    /**
+     * @var string
+     */
+    private string $errorPage;
+    /**
+     * @var bool
+     */
+    public bool $devMode = true;
 
     /**
      * @var string
      */
-    private string $defaultRoute;
+    private string $defaultController;
 
     /**
      * @var string
@@ -62,9 +70,28 @@ class Application
 
     public function run()
     {
-        $request = $this->getRequest();
-        $this->route = new Route($this,$request->getRoute());
+        try
+        {
 
+            $request = $this->getRequest();
+            $this->route = new Route($this,$request->getRoute());
+
+            call_user_func([ $this->route->getController(), $this->route->getAction() ]);
+
+        }
+        catch (\Throwable $e)
+        {
+            if($this->devMode)
+            {
+                throw $e;
+            }
+            else
+            {
+                $this->route = new Route($this,$this->errorPage);
+                call_user_func([ $this->route->getController(), $this->route->getAction() ]);
+                // --------------- LOG
+            }
+        }
     }
 
     /**
@@ -94,7 +121,7 @@ class Application
     /**
      * @return string
      */
-    public function getControllerNamespace()
+    public function getControllerNamespace() : string
     {
         return $this->controllerNamespace;
     }
@@ -102,7 +129,7 @@ class Application
     /**
      * @return string
      */
-    public function getDefaultAction()
+    public function getDefaultAction() : string
     {
         return $this->defaultAction;
     }
@@ -110,9 +137,9 @@ class Application
     /**
      * @return string
      */
-    public function getDefaultRoute()
+    public function getDefaultController()
     {
-        return $this->defaultRoute;
+        return $this->defaultController;
     }
 
 }
