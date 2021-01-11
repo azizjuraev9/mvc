@@ -51,11 +51,14 @@ class Route
     {
         $this->route = $route;
         $this->application = $application;
-
         $_route = explode('/',$route);
-        $this->_controller = $_route[0] ?? '';
-        $this->_action = $_route[1] ?? '';
-
+        $this->_controller = $_route[1] ?? '';
+        $this->_action = $_route[2] ?? '';
+        $this->_action = explode('?',$this->_action)[0] ?? '';
+//        var_dump([
+//            $this->_controller,
+//            $this->_action,
+//        ]);die;
     }
 
     public function getController() : string

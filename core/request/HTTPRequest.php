@@ -12,18 +12,26 @@ namespace core\request;
 class HTTPRequest implements IRequest
 {
 
+    private array $request;
+
+    public function __construct()
+    {
+        $this->request = $_SERVER;
+    }
+
     public function getRoute(): string
     {
-        return 'sdfsdf';
+        return $this->request['REQUEST_URI'];
     }
 
     public function getData(): array
     {
-        // TODO: Implement getData() method.
+        //--------
     }
 
     public function getType(): string
     {
+        return $this->request['REQUEST_METHOD'];
         // TODO: Implement getType() method.
     }
 

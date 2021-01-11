@@ -19,7 +19,16 @@ class Application
      */
     public bool $devMode = true;
 
+    /**
+     * @var string
+     */
     public string $viewPath = 'views/';
+
+    /**
+     * @var Session
+     */
+    public Session $session;
+
     /**
      * @var string
      */
@@ -87,12 +96,16 @@ class Application
         {
 
             $request = $this->getRequest();
-            $this->route = new Route($this,$request->getRoute());
+            $route = $request->getRoute();
+            $route = $route === '/' ? '/'.$this->defaultController . '/' . $this->defaultAction : $route;
+//            var_dump($route);die;
+            $this->route = new Route($this,$route);
 
             $controller = $this->route->getController();
             $controller = new $controller( $this, $this->getRequest(), $this->getResponse() );
 
             $action = $this->route->getAction();
+
 
             $result = $controller->$action();
 

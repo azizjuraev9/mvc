@@ -7,11 +7,12 @@
  */
 
 return [
-    'devMode' => false,
+    'devMode' => true,
     'defaultController' => 'Site',
     'defaultAction' => 'index',
     'controllerNamespace'  => 'controllers\\',
     'errorPage' => 'site/error',
     'request' => \core\request\HTTPRequest::class,
     'response' => \core\response\WebHtmlResponse::class,
+    'session' => \core\Session::getSession()
 ];

@@ -1,0 +1,34 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Aziz Juraev
+ * Date: 13.10.2020
+ * Time: 21:54
+ */
+
+require_once dirname(__DIR__).'/vendor/autoload.php';
+
+
+use Doctrine\Migrations\Tools\Console\Command;
+use Symfony\Component\Console\Application;
+
+$helperSet = require dirname(__DIR__) . '/config/cli-config.php';
+
+$cli = new Application('Doctrine Migrations');
+$cli->setCatchExceptions(false);
+$cli->setHelperSet($helperSet);
+
+$cli->addCommands(array(
+    new Command\DumpSchemaCommand(),
+    new Command\ExecuteCommand(),
+    new Command\GenerateCommand(),
+    new Command\LatestCommand(),
+    new Command\MigrateCommand(),
+    new Command\RollupCommand(),
+    new Command\StatusCommand(),
+    new Command\VersionCommand(),
+    new Command\DiffCommand()
+));
+
+$cli->run();

@@ -9,13 +9,19 @@
 namespace controllers;
 
 use core\WebController;
+use models\forms\LoginForm;
+use models\User;
 
 class SiteController extends WebController
 {
 
-    public function actionIndex()
+    public function actionIndex() : string
     {
-        return $this->render('index');
+        $user = User::getCurrentUser();
+
+        return $this->render('index',[
+            'user' => $user
+        ]);
     }
 
 }
